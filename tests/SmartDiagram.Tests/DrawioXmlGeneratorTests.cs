@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.IO;
 using System.Xml.Linq;
 using SmartDiagram.Core.Diagram;
 using SmartDiagram.Core.Samples;

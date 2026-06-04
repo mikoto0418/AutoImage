@@ -17,22 +17,22 @@
                 <TextBlock Text="预览信息" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,22" />
 
                 <TextBlock Text="文件名" FontWeight="SemiBold" Margin="0,0,0,8" />
-                <TextBox Text="功能模块图.drawio" />
+                <TextBox x:Name="PreviewFileNameTextBox" Text="diagram.drawio" />
 
                 <TextBlock Text="图类型" FontWeight="SemiBold" Margin="0,12,0,8" />
-                <TextBox Text="功能模块图" />
+                <TextBox x:Name="PreviewDiagramTypeTextBox" Text="功能模块图" />
 
                 <TextBlock Text="页面" FontWeight="SemiBold" Margin="0,12,0,8" />
                 <TextBox Text="1" />
 
                 <TextBlock Text="图尺寸" FontWeight="SemiBold" Margin="0,12,0,8" />
-                <TextBox Text="1280 × 960" />
+                <TextBox Text="自适应画布" />
 
                 <TextBlock Text="节点数量" FontWeight="SemiBold" Margin="0,12,0,8" />
-                <TextBox Text="19" />
+                <TextBox x:Name="PreviewNodeCountTextBox" Text="0" />
 
                 <TextBlock Text="连线数量" FontWeight="SemiBold" Margin="0,12,0,8" />
-                <TextBox Text="20" />
+                <TextBox x:Name="PreviewEdgeCountTextBox" Text="0" />
 
                 <Button Content="⟳  刷新预览" Margin="0,32,0,0" />
             </StackPanel>

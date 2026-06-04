@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using SmartDiagram.Core.Diagram;
 
 namespace SmartDiagram.App.Components;
 
@@ -10,6 +11,40 @@ public static class DiagramPreviewFactory
     private static readonly Brush CanvasBrush = BrushFrom("#FDFDFD");
     private static readonly Brush BlueBrush = BrushFrom("#0F6BFF");
     private static readonly Brush BorderBrush = BrushFrom("#E2E8F0");
+    private static readonly Brush MutedLineBrush = BrushFrom("#475569");
+
+    public static UIElement FromDocument(DiagramDocument document)
+    {
+        ArgumentNullException.ThrowIfNull(document);
+
+        var bounds = Layout(document);
+        var width = Math.Max(760, bounds.Values.Max(item => item.X + item.Width + 80));
+        var height = Math.Max(520, bounds.Values.Max(item => item.Y + item.Height + 80));
+        var canvas = new Canvas
+        {
+            Width = width,
+            Height = height,
+            Background = CanvasBrush
+        };
+
+        foreach (var edge in document.Edges)
+        {
+            if (!bounds.TryGetValue(edge.From, out var from) || !bounds.TryGetValue(edge.To, out var to))
+            {
+                continue;
+            }
+
+            AddDocumentLine(canvas, from.CenterX, from.CenterY, to.CenterX, to.CenterY, edge.Label);
+        }
+
+        foreach (var node in document.Nodes)
+        {
+            var nodeBounds = bounds[node.Id];
+            AddDocumentNode(canvas, node, nodeBounds);
+        }
+
+        return CenteredViewBox(canvas);
+    }
 
     public static UIElement ChenEr(bool withHighlights = false)
     {
@@ -133,6 +168,115 @@ public static class DiagramPreviewFactory
         };
     }
 
+    private static IReadOnlyDictionary<string, PreviewNodeBounds> Layout(DiagramDocument document)
+    {
+        var nodeOrder = document.Nodes
+            .Select((node, index) => new { node.Id, Index = index })
+            .ToDictionary(item => item.Id, item => item.Index, StringComparer.OrdinalIgnoreCase);
+
+        var depths = document.Nodes.ToDictionary(node => node.Id, _ => 0, StringComparer.OrdinalIgnoreCase);
+        for (var pass = 0; pass < document.Nodes.Count; pass++)
+        {
+            var changed = false;
+            foreach (var edge in document.Edges)
+            {
+                if (!depths.TryGetValue(edge.From, out var fromDepth) || !depths.ContainsKey(edge.To))
+                {
+                    continue;
+                }
+
+                var nextDepth = fromDepth + 1;
+                if (nextDepth <= depths[edge.To])
+                {
+                    continue;
+                }
+
+                depths[edge.To] = nextDepth;
+                changed = true;
+            }
+
+            if (!changed)
+            {
+                break;
+            }
+        }
+
+        return document.Nodes
+            .GroupBy(node => depths[node.Id])
+            .SelectMany(layer =>
+            {
+                var orderedLayer = layer.OrderBy(node => nodeOrder[node.Id]).ToList();
+                return orderedLayer.Select((node, index) =>
+                {
+                    var size = GetSize(node.Shape);
+                    var x = 80 + index * (size.Width + document.Layout.NodeGap);
+                    var y = 56 + layer.Key * (size.Height + document.Layout.LayerGap);
+                    return new KeyValuePair<string, PreviewNodeBounds>(
+                        node.Id,
+                        new PreviewNodeBounds(x, y, size.Width, size.Height));
+                });
+            })
+            .ToDictionary(pair => pair.Key, pair => pair.Value, StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static PreviewNodeSize GetSize(DiagramShape shape)
+    {
+        return shape switch
+        {
+            DiagramShape.Diamond => new PreviewNodeSize(130, 82),
+            DiagramShape.Ellipse => new PreviewNodeSize(130, 62),
+            DiagramShape.Cylinder => new PreviewNodeSize(150, 72),
+            DiagramShape.Swimlane => new PreviewNodeSize(220, 120),
+            _ => new PreviewNodeSize(150, 62)
+        };
+    }
+
+    private static void AddDocumentNode(Canvas canvas, DiagramNode node, PreviewNodeBounds bounds)
+    {
+        switch (node.Shape)
+        {
+            case DiagramShape.Diamond:
+                AddDiamond(canvas, bounds.X, bounds.Y, bounds.Width, bounds.Height, node.Label);
+                break;
+            case DiagramShape.Ellipse:
+                AddEllipse(canvas, bounds.X, bounds.Y, bounds.Width, bounds.Height, node.Label);
+                break;
+            case DiagramShape.RoundedRectangle:
+                AddRoundRect(canvas, bounds.X, bounds.Y, bounds.Width, bounds.Height, node.Label);
+                break;
+            case DiagramShape.Cylinder:
+                AddCylinder(canvas, bounds.X, bounds.Y, bounds.Width, bounds.Height, node.Label);
+                break;
+            case DiagramShape.Parallelogram:
+                AddParallelogram(canvas, bounds.X, bounds.Y, bounds.Width, bounds.Height, node.Label);
+                break;
+            default:
+                AddRect(canvas, bounds.X, bounds.Y, bounds.Width, bounds.Height, node.Label);
+                break;
+        }
+    }
+
+    private static void AddDocumentLine(Canvas canvas, double x1, double y1, double x2, double y2, string? label)
+    {
+        canvas.Children.Add(new Line
+        {
+            X1 = x1,
+            Y1 = y1,
+            X2 = x2,
+            Y2 = y2,
+            Stroke = MutedLineBrush,
+            StrokeThickness = 1.35
+        });
+
+        if (!string.IsNullOrWhiteSpace(label))
+        {
+            var text = Text(label, 13, FontWeights.SemiBold);
+            text.Background = CanvasBrush;
+            text.Padding = new Thickness(4, 1, 4, 1);
+            canvas.Children.Add(Position(text, (x1 + x2) / 2 + 8, (y1 + y2) / 2 - 20));
+        }
+    }
+
     private static SolidColorBrush BrushFrom(string color)
     {
         return new SolidColorBrush((Color)ColorConverter.ConvertFromString(color));
@@ -162,6 +306,21 @@ public static class DiagramPreviewFactory
         canvas.Children.Add(Position(Text(label, 16, FontWeights.SemiBold, HorizontalAlignment.Center), x, y + height / 2 - 11, width));
     }
 
+    private static void AddRoundRect(Canvas canvas, double x, double y, double width, double height, string label)
+    {
+        canvas.Children.Add(Position(new Rectangle
+        {
+            Width = width,
+            Height = height,
+            RadiusX = 12,
+            RadiusY = 12,
+            Stroke = Brushes.Black,
+            StrokeThickness = 1.4,
+            Fill = Brushes.White
+        }, x, y));
+        canvas.Children.Add(Position(Text(label, 16, FontWeights.SemiBold, HorizontalAlignment.Center), x, y + height / 2 - 11, width));
+    }
+
     private static void AddEllipse(Canvas canvas, double x, double y, double width, double height, string label, Brush? accent = null)
     {
         var borderBrush = accent ?? Brushes.Black;
@@ -174,6 +333,47 @@ public static class DiagramPreviewFactory
             Fill = Brushes.White
         }, x, y));
         canvas.Children.Add(Position(Text(label, 13, FontWeights.Normal, HorizontalAlignment.Center), x, y + height / 2 - 9, width));
+    }
+
+    private static void AddCylinder(Canvas canvas, double x, double y, double width, double height, string label)
+    {
+        canvas.Children.Add(Position(new Rectangle
+        {
+            Width = width,
+            Height = height,
+            Stroke = Brushes.Black,
+            StrokeThickness = 1.4,
+            Fill = Brushes.White
+        }, x, y));
+        canvas.Children.Add(Position(new Ellipse
+        {
+            Width = width,
+            Height = 18,
+            Stroke = Brushes.Black,
+            StrokeThickness = 1.4,
+            Fill = Brushes.White
+        }, x, y));
+        canvas.Children.Add(Position(Text(label, 15, FontWeights.SemiBold, HorizontalAlignment.Center), x, y + height / 2 - 10, width));
+    }
+
+    private static void AddParallelogram(Canvas canvas, double x, double y, double width, double height, string label)
+    {
+        var skew = Math.Min(24, width * 0.18);
+        var polygon = new Polygon
+        {
+            Points = new PointCollection
+            {
+                new(skew, 0),
+                new(width, 0),
+                new(width - skew, height),
+                new(0, height)
+            },
+            Stroke = Brushes.Black,
+            StrokeThickness = 1.4,
+            Fill = Brushes.White
+        };
+        canvas.Children.Add(Position(polygon, x, y));
+        canvas.Children.Add(Position(Text(label, 15, FontWeights.SemiBold, HorizontalAlignment.Center), x, y + height / 2 - 10, width));
     }
 
     private static void AddDiamond(Canvas canvas, double x, double y, double width, double height, string label)
@@ -236,4 +436,13 @@ public static class DiagramPreviewFactory
         Canvas.SetTop(element, y);
         return element;
     }
+
+    private sealed record PreviewNodeBounds(double X, double Y, double Width, double Height)
+    {
+        public double CenterX => X + Width / 2;
+
+        public double CenterY => Y + Height / 2;
+    }
+
+    private sealed record PreviewNodeSize(double Width, double Height);
 }
