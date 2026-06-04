@@ -2,6 +2,8 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text.Json;
+using SmartDiagram.Core.Diagram;
+using SmartDiagram.Core.Samples;
 using SmartDiagram.Model;
 
 namespace SmartDiagram.Tests;
@@ -100,6 +102,23 @@ public sealed class ModelClientTests
         Assert.Equal("module", document.DiagramId);
         Assert.Equal("系统模块", document.Title);
         Assert.Contains(document.Nodes, node => node.Id == "export");
+    }
+
+    [Fact]
+    public void DiagramPromptBuilder_includes_current_diagram_when_enhancing()
+    {
+        var request = DiagramGenerationRequest.ForEnhancement(
+            DiagramKind.ChenEr,
+            "给学生增加联系方式属性",
+            SampleDiagramData.ChenErDocument);
+
+        var userPrompt = DiagramPromptBuilder.Build(request).Single(message => message.Role == "user").Content;
+
+        Assert.Contains("增强当前图", userPrompt);
+        Assert.Contains("必须保留当前图中已有的节点和连线", userPrompt);
+        Assert.Contains("\"diagram_id\": \"teaching_management_chen_er\"", userPrompt);
+        Assert.Contains("\"label\": \"学生\"", userPrompt);
+        Assert.Contains("给学生增加联系方式属性", userPrompt);
     }
 
     private sealed class StubChatClient(string response) : IChatCompletionClient

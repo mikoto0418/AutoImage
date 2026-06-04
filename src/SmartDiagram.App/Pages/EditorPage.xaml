@@ -24,17 +24,24 @@
                         <ComboBoxItem Content="功能模块图" />
                         <ComboBoxItem Content="流程图" />
                     </ComboBox>
+                    <TextBlock Text="当前用于示例模板选择；增强会沿用当前图类型。"
+                               Foreground="{StaticResource TextSecondary}"
+                               TextWrapping="Wrap"
+                               Margin="0,6,0,0" />
 
                     <Border Height="1" Background="{StaticResource BorderColor}" Margin="0,16,0,12" />
 
-                    <TextBlock Text="输入" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,8" />
+                    <TextBlock Text="增强指令" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,8" />
                     <TextBox x:Name="PromptTextBox"
-                             Text="教学管理系统的实体关系图，包含院系、学生、教师、课程、成绩、教室等实体及其关系。"
+                             Text="在当前图上补充学生联系方式属性，并完善课程与成绩之间的关系。"
                              AcceptsReturn="True"
                              TextWrapping="Wrap"
                              Height="310"
                              VerticalScrollBarVisibility="Auto" />
-                    <TextBlock Text="38/2000" Foreground="{StaticResource TextSecondary}" HorizontalAlignment="Right" Margin="0,6,0,18" />
+                    <TextBlock Text="默认基于当前图增强；新建项目/空白图后再从零生成。"
+                               Foreground="{StaticResource TextSecondary}"
+                               TextWrapping="Wrap"
+                               Margin="0,6,0,18" />
 
                     <TextBlock Text="上传参考图（可选）" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,8" />
                     <Button x:Name="UploadButton" Height="94" Click="UploadButton_Click">
@@ -57,7 +64,7 @@
                         <TextBlock Text="自动布局  ›" HorizontalAlignment="Right" Foreground="{StaticResource TextSecondary}" />
                     </Grid>
 
-                    <Button x:Name="GenerateButton" Style="{StaticResource PrimaryButton}" Height="46" Margin="0,18,0,0" Content="✦  生成" Click="GenerateButton_Click" />
+                    <Button x:Name="GenerateButton" Style="{StaticResource PrimaryButton}" Height="46" Margin="0,18,0,0" Content="✦  增强当前图" Click="GenerateButton_Click" />
                     <TextBlock x:Name="GenerationStatusText"
                                Text="使用本地模型配置"
                                Foreground="{StaticResource TextSecondary}"
@@ -80,32 +87,36 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                    <Button Width="42" Content="⌖" Margin="0,0,10,0" />
-                    <Button Width="42" Content="☝" Margin="0,0,10,0" />
-                    <Button Width="42" Content="⊕" Margin="0,0,10,0" />
-                    <Button Width="42" Content="−" Margin="0,0,10,0" />
-                    <Button Width="42" Content="⛶" Margin="0,0,10,0" />
-                    <Button Width="42" Content="⤢" />
-                </StackPanel>
+                <DockPanel Margin="0,0,0,10">
+                    <TextBlock x:Name="PreviewTitleText"
+                               Text="教学管理系统 Chen ER 图"
+                               FontSize="15"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button x:Name="UndoButton" Width="78" Content="↶ 撤销" Margin="0,0,8,0" Click="UndoButton_Click" />
+                        <Button x:Name="RedoButton" Width="78" Content="↷ 重做" Margin="0,0,8,0" Click="RedoButton_Click" />
+                        <Button Width="96" Content="⟳ 刷新预览" Margin="0,0,8,0" Click="RefreshPreviewButton_Click" />
+                        <Button Width="96" Content="示例模板" Click="ResetSampleButton_Click" />
+                    </StackPanel>
+                </DockPanel>
 
                 <components:DrawioWebPreviewControl x:Name="PreviewHost" Grid.Row="1" />
 
-                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
-                    <Button Width="44" Content="▤" />
-                    <Button Width="56" Content="−" Margin="10,0,0,0" />
-                    <Button Width="88" Content="100%" />
-                    <Button Width="56" Content="+" />
-                    <Button Width="44" Content="⛶" Margin="10,0,0,0" />
-                </StackPanel>
+                <TextBlock Grid.Row="2"
+                           Text="预览优先使用 diagrams.net；不可用时自动显示 WPF 简化预览。"
+                           Foreground="{StaticResource TextSecondary}"
+                           HorizontalAlignment="Center"
+                           Margin="0,10,0,0" />
             </Grid>
         </Border>
 
         <Grid Grid.Column="2" Margin="8,0,0,0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="210" />
-                <RowDefinition Height="210" />
+                <RowDefinition Height="92" />
+                <RowDefinition Height="2*" />
+                <RowDefinition Height="1.35*" />
+                <RowDefinition Height="1.35*" />
             </Grid.RowDefinitions>
 
             <Border Background="{StaticResource PanelBackground}"
@@ -113,24 +124,39 @@
                     BorderThickness="1"
                     CornerRadius="6">
                 <Grid Margin="12">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                        <Button x:Name="JsonButton" Style="{StaticResource GhostButton}" Foreground="{StaticResource PrimaryBlue}" FontWeight="SemiBold" Content="JSON" Click="JsonButton_Click" />
-                        <Button Style="{StaticResource GhostButton}" Content="节点" Margin="8,0,0,0" />
-                        <Button Style="{StaticResource GhostButton}" Content="连线" Margin="8,0,0,0" />
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="当前结构" FontSize="15" FontWeight="SemiBold" />
+                        <TextBlock x:Name="DiagramSummaryText"
+                                   Text="Chen ER 图 · 示例模板"
+                                   Foreground="{StaticResource TextSecondary}"
+                                   TextTrimming="CharacterEllipsis"
+                                   Margin="0,8,0,0" />
                     </StackPanel>
-                    <TextBox x:Name="JsonBox"
-                             Grid.Row="1"
-                             AcceptsReturn="True"
-                             AcceptsTab="True"
-                             TextWrapping="NoWrap"
-                             FontFamily="Consolas"
-                             FontSize="13"
-                             VerticalScrollBarVisibility="Auto"
-                             HorizontalScrollBarVisibility="Auto" />
+                    <Border Grid.Column="1"
+                            Padding="12,7"
+                            Margin="8,0,0,0"
+                            Background="#EFF6FF"
+                            BorderBrush="#DBEAFE"
+                            BorderThickness="1"
+                            CornerRadius="6"
+                            VerticalAlignment="Center">
+                        <TextBlock x:Name="NodeCountBadgeText" Text="节点 7" Foreground="{StaticResource PrimaryBlue}" FontWeight="SemiBold" />
+                    </Border>
+                    <Border Grid.Column="2"
+                            Padding="12,7"
+                            Margin="8,0,0,0"
+                            Background="#F0FDF4"
+                            BorderBrush="#BBF7D0"
+                            BorderThickness="1"
+                            CornerRadius="6"
+                            VerticalAlignment="Center">
+                        <TextBlock x:Name="EdgeCountBadgeText" Text="连线 6" Foreground="{StaticResource SuccessGreen}" FontWeight="SemiBold" />
+                    </Border>
                 </Grid>
             </Border>
 
@@ -145,15 +171,25 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <TextBlock x:Name="NodeCountText" Text="节点（7）" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" />
-                    <DataGrid x:Name="NodeGrid" Grid.Row="1">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="id" Binding="{Binding Id}" />
-                            <DataGridTextColumn Header="标签" Binding="{Binding Label}" />
-                            <DataGridTextColumn Header="类型" Binding="{Binding Type}" />
-                            <DataGridTextColumn Header="形状" Binding="{Binding Shape}" />
-                        </DataGrid.Columns>
-                    </DataGrid>
+                    <DockPanel Margin="0,0,0,8">
+                        <TextBlock Text="Diagram JSON" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        <Button x:Name="JsonButton"
+                                DockPanel.Dock="Right"
+                                Style="{StaticResource GhostButton}"
+                                Foreground="{StaticResource PrimaryBlue}"
+                                FontWeight="SemiBold"
+                                Content="打开编辑器"
+                                Click="JsonButton_Click" />
+                    </DockPanel>
+                    <TextBox x:Name="JsonBox"
+                             Grid.Row="1"
+                             AcceptsReturn="True"
+                             AcceptsTab="True"
+                             TextWrapping="NoWrap"
+                             FontFamily="Consolas"
+                             FontSize="12"
+                             VerticalScrollBarVisibility="Auto"
+                             HorizontalScrollBarVisibility="Auto" />
                 </Grid>
             </Border>
 
@@ -168,14 +204,34 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <TextBlock x:Name="EdgeCountText" Text="连线（6）" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" />
-                    <DataGrid x:Name="EdgeGrid" Grid.Row="1">
+                    <TextBlock x:Name="NodeCountText" Text="节点" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" />
+                    <DataGrid x:Name="NodeGrid" Grid.Row="1" HorizontalScrollBarVisibility="Auto">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="id" Binding="{Binding Id}" />
-                            <DataGridTextColumn Header="标签" Binding="{Binding Label}" />
-                            <DataGridTextColumn Header="起点" Binding="{Binding From}" />
-                            <DataGridTextColumn Header="终点" Binding="{Binding To}" />
-                            <DataGridTextColumn Header="基数" Binding="{Binding Cardinality}" />
+                            <DataGridTextColumn Header="标签" Binding="{Binding Label}" Width="1.4*" />
+                            <DataGridTextColumn Header="类型" Binding="{Binding Type}" Width="*" />
+                            <DataGridTextColumn Header="形状" Binding="{Binding Shape}" Width="*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+            <Border Grid.Row="3"
+                    Margin="0,8,0,0"
+                    Background="{StaticResource PanelBackground}"
+                    BorderBrush="{StaticResource BorderColor}"
+                    BorderThickness="1"
+                    CornerRadius="6">
+                <Grid Margin="12">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <TextBlock x:Name="EdgeCountText" Text="连线" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" />
+                    <DataGrid x:Name="EdgeGrid" Grid.Row="1" HorizontalScrollBarVisibility="Auto">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="标签" Binding="{Binding Label}" Width="*" />
+                            <DataGridTextColumn Header="起点" Binding="{Binding From}" Width="*" />
+                            <DataGridTextColumn Header="终点" Binding="{Binding To}" Width="*" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>

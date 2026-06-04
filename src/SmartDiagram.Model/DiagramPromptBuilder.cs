@@ -1,3 +1,5 @@
+using SmartDiagram.Core.Diagram;
+
 namespace SmartDiagram.Model;
 
 public static class DiagramPromptBuilder
@@ -13,6 +15,26 @@ public static class DiagramPromptBuilder
 
     private static string BuildUserPrompt(DiagramGenerationRequest request)
     {
+        if (request.CurrentDocument is not null)
+        {
+            return $"""
+            图类型：{MapKind(request.DiagramKind)}
+
+            任务：增强当前图。
+            必须保留当前图中已有的节点和连线；只能根据用户描述增加、重命名、修正或补充必要元素。
+            除非用户明确要求删除，否则不要删除任何已有节点或连线。
+            输出必须是增强后的完整 Diagram JSON。
+
+            当前 Diagram JSON：
+            {DiagramJsonSerializer.ToJson(request.CurrentDocument)}
+
+            用户增强描述：
+            {request.Prompt}
+
+            只返回 JSON，不要 Markdown，不要解释。
+            """;
+        }
+
         return $"""
         图类型：{MapKind(request.DiagramKind)}
 
