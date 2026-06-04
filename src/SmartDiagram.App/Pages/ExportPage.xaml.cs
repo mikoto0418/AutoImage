@@ -70,7 +70,7 @@ public partial class ExportPage : UserControl
     private void RefreshPreview()
     {
         var document = _documents.CurrentDocument;
-        PreviewHost.Content = DiagramPreviewFactory.FromDocument(document);
+        PreviewHost.ShowDocument(document);
         PreviewFileNameTextBox.Text = $"{document.Title}.drawio";
         PreviewDiagramTypeTextBox.Text = DisplayDiagramType(document.DiagramType);
         PreviewNodeCountTextBox.Text = document.Nodes.Count.ToString();

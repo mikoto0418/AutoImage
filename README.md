@@ -10,7 +10,7 @@ Windows 本地智能绘图工具原型，面向论文、课程设计、系统设
 - **统一图模型**：`DiagramDocument` 贯穿模型生成、校验、预览、表格和导出。
 - **本地密钥优先**：模型配置放在本地 `model.local.json`，默认不会进入 Git。
 - **论文友好样式**：优先支持黑白、简洁、可打印的 Chen ER 图、流程图、功能模块图。
-- **动态预览**：WPF 预览区根据当前 `DiagramDocument` 绘制节点与连线，生成结果和导出结果保持一致。
+- **双预览路径**：优先用 WebView2 内嵌 diagrams.net 加载 draw.io XML，失败时降级到 WPF 简化预览。
 
 ## 当前能力
 
@@ -19,7 +19,7 @@ Windows 本地智能绘图工具原型，面向论文、课程设计、系统设
 | `SmartDiagram.Core` | 图结构模型、样例数据、JSON 序列化、结构校验、节点/连线表格适配 |
 | `SmartDiagram.Model` | OpenAI 兼容接口调用、本地模型配置加载、提示词构建、模型响应解析 |
 | `SmartDiagram.Drawio` | `DiagramDocument` 到 draw.io XML 的转换与 `.drawio` 文件导出 |
-| `SmartDiagram.App` | WPF 桌面端原型：输入、生成、动态预览、JSON、节点表、连线表、导出 |
+| `SmartDiagram.App` | WPF 桌面端原型：输入、生成、WebView2 diagrams.net 预览、WPF 降级预览、JSON、节点表、连线表、导出 |
 | `SmartDiagram.Tests` | 样例数据、校验器、序列化、模型客户端、draw.io 导出、动态预览测试 |
 
 ## 项目结构
@@ -88,7 +88,7 @@ dotnet run --project .\src\SmartDiagram.App\SmartDiagram.App.csproj
 1. 在编辑页选择图类型，例如 Chen ER 图、功能模块图或流程图。
 2. 输入论文/系统设计描述。
 3. 点击生成，模型返回 Diagram JSON。
-4. 系统校验结构，更新 WPF 动态预览、JSON、节点表和连线表。
+4. 系统校验结构，更新 diagrams.net 预览、JSON、节点表和连线表。
 5. 在导出页保存为 `.drawio`，继续用 diagrams.net 编辑。
 
 ## DiagramDocument 示例
@@ -115,9 +115,10 @@ dotnet run --project .\src\SmartDiagram.App\SmartDiagram.App.csproj
 - [x] WPF 原型界面与基础导航
 - [x] `DiagramDocument` 核心模型与校验
 - [x] OpenAI 兼容模型生成流程
-- [x] WPF 动态预览当前图结构
+- [x] WebView2 / diagrams.net 内嵌预览
+- [x] WPF 降级预览当前图结构
 - [x] draw.io XML 生成与 `.drawio` 导出
-- [ ] WebView2 / diagrams.net 内嵌预览与编辑
+- [ ] diagrams.net 编辑后 XML 回写
 - [ ] Visio COM 自动绘图
 - [ ] 自然语言增量修改
 - [ ] 图片识别后重绘为可编辑图

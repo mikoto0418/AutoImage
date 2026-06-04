@@ -1,0 +1,33 @@
+<UserControl x:Class="SmartDiagram.App.Components.DrawioWebPreviewControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf">
+    <Grid>
+        <ContentControl x:Name="FallbackHost" />
+
+        <Border x:Name="WebHost"
+                Background="#FFFFFF"
+                BorderBrush="{StaticResource BorderColor}"
+                BorderThickness="1"
+                CornerRadius="6"
+                Visibility="Collapsed">
+            <Grid>
+                <wv2:WebView2 x:Name="Browser" />
+                <Border x:Name="LoadingPanel"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom"
+                        Margin="12"
+                        Padding="10,6"
+                        Background="#EFF6FF"
+                        BorderBrush="#DBEAFE"
+                        BorderThickness="1"
+                        CornerRadius="6">
+                    <TextBlock x:Name="StatusText"
+                               Text="正在初始化 WebView2 预览..."
+                               Foreground="{StaticResource PrimaryBlue}"
+                               FontSize="12" />
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

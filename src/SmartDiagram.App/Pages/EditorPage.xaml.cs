@@ -79,7 +79,7 @@ public partial class EditorPage : UserControl
     private void ApplyDocument(DiagramDocument document, string status)
     {
         _documents.SetCurrentDocument(document);
-        PreviewHost.Content = DiagramPreviewFactory.FromDocument(document);
+        PreviewHost.ShowDocument(document);
         JsonBox.Text = DiagramJsonSerializer.ToJson(document);
         NodeGrid.ItemsSource = DiagramTableAdapter.NodeRows(document).ToList();
         EdgeGrid.ItemsSource = DiagramTableAdapter.EdgeRows(document).ToList();
