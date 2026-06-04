@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\SmartDiagram.Core\SmartDiagram.Core.csproj" />
     <ProjectReference Include="..\SmartDiagram.Drawio\SmartDiagram.Drawio.csproj" />
+    <ProjectReference Include="..\SmartDiagram.Model\SmartDiagram.Model.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

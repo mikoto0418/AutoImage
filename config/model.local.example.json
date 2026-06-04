@@ -1,0 +1,9 @@
+{
+  "provider": "siliconflow",
+  "baseUrl": "https://api.siliconflow.cn/v1",
+  "model": "deepseek-ai/DeepSeek-V4-Pro",
+  "apiKey": "sk-your-local-key",
+  "timeoutSeconds": 60,
+  "maxTokens": 2048,
+  "temperature": 0.1
+}

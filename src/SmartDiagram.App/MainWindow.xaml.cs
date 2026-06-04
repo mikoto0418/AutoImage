@@ -5,6 +5,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using SmartDiagram.App.Components;
 using SmartDiagram.App.Pages;
+using SmartDiagram.App.Workspace;
 using SmartDiagram.Core.Samples;
 using SmartDiagram.Core.Ui;
 
@@ -20,6 +21,7 @@ public partial class MainWindow : Window
     private readonly Brush _green = BrushFrom("#16A34A");
     private readonly Brush _amber = BrushFrom("#F59E0B");
     private readonly Brush _red = BrushFrom("#EF4444");
+    private readonly WorkspaceDocumentStore _documents = new();
 
     public MainWindow()
     {
@@ -44,7 +46,7 @@ public partial class MainWindow : Window
         ContentHost.Content = screen switch
         {
             AppScreen.Empty => BuildEmptyPage(),
-            AppScreen.Export => new ExportPage(),
+            AppScreen.Export => new ExportPage(_documents),
             AppScreen.Settings => BuildSettingsPage(),
             AppScreen.Visio => BuildVisioPage(),
             AppScreen.JsonEditor => BuildJsonEditorPage(),
@@ -52,7 +54,7 @@ public partial class MainWindow : Window
             AppScreen.Modifications => BuildModificationPage(),
             AppScreen.ImageReview => BuildImageReviewPage(),
             AppScreen.ExportPreview => BuildExportPreviewPage(),
-            _ => new EditorPage(ShowScreen)
+            _ => new EditorPage(ShowScreen, _documents)
         };
     }
 

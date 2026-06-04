@@ -3,15 +3,18 @@ using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Win32;
 using SmartDiagram.App.Components;
-using SmartDiagram.Core.Samples;
+using SmartDiagram.App.Workspace;
 using SmartDiagram.Drawio;
 
 namespace SmartDiagram.App.Pages;
 
 public partial class ExportPage : UserControl
 {
-    public ExportPage()
+    private readonly WorkspaceDocumentStore _documents;
+
+    public ExportPage(WorkspaceDocumentStore documents)
     {
+        _documents = documents;
         InitializeComponent();
         PreviewHost.Content = DiagramPreviewFactory.Module();
         ExportPathTextBox.Text = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
@@ -38,7 +41,7 @@ public partial class ExportPage : UserControl
 
         try
         {
-            var savedPath = DrawioFileExporter.Save(SampleDiagramData.FunctionModuleDocument, dialog.FileName);
+            var savedPath = DrawioFileExporter.Save(_documents.CurrentDocument, dialog.FileName);
             ExportPathTextBox.Text = Path.GetDirectoryName(savedPath) ?? string.Empty;
             ExportFileNameTextBox.Text = Path.GetFileNameWithoutExtension(savedPath);
             ExportStatusText.Text = $"已导出：{Path.GetFileName(savedPath)}";

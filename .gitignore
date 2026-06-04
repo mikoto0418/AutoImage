@@ -10,3 +10,7 @@ coverage/
 *.nupkg
 *.snupkg
 *.log
+model.local.json
+*.local.json
+_local_*/
+_local_*

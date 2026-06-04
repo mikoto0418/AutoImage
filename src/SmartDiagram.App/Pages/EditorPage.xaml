@@ -18,14 +18,17 @@
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel Margin="14">
                     <TextBlock Text="图类型" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,8" />
-                    <ComboBox SelectedIndex="0">
+                    <ComboBox x:Name="DiagramTypeComboBox" SelectedIndex="0">
                         <ComboBoxItem Content="Chen ER 图" />
+                        <ComboBoxItem Content="功能模块图" />
+                        <ComboBoxItem Content="流程图" />
                     </ComboBox>
 
                     <Border Height="1" Background="{StaticResource BorderColor}" Margin="0,16,0,12" />
 
                     <TextBlock Text="输入" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,8" />
-                    <TextBox Text="教学管理系统的实体关系图，包含院系、学生、教师、课程、成绩、教室等实体及其关系。"
+                    <TextBox x:Name="PromptTextBox"
+                             Text="教学管理系统的实体关系图，包含院系、学生、教师、课程、成绩、教室等实体及其关系。"
                              AcceptsReturn="True"
                              TextWrapping="Wrap"
                              Height="310"
@@ -53,7 +56,12 @@
                         <TextBlock Text="自动布局  ›" HorizontalAlignment="Right" Foreground="{StaticResource TextSecondary}" />
                     </Grid>
 
-                    <Button Style="{StaticResource PrimaryButton}" Height="46" Margin="0,18,0,0" Content="✦  生成" />
+                    <Button x:Name="GenerateButton" Style="{StaticResource PrimaryButton}" Height="46" Margin="0,18,0,0" Content="✦  生成" Click="GenerateButton_Click" />
+                    <TextBlock x:Name="GenerationStatusText"
+                               Text="使用本地模型配置"
+                               Foreground="{StaticResource TextSecondary}"
+                               TextWrapping="Wrap"
+                               Margin="0,10,0,0" />
                 </StackPanel>
             </ScrollViewer>
         </Border>
@@ -136,7 +144,7 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <TextBlock Text="节点（7）" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" />
+                    <TextBlock x:Name="NodeCountText" Text="节点（7）" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" />
                     <DataGrid x:Name="NodeGrid" Grid.Row="1">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="id" Binding="{Binding Id}" />
@@ -159,7 +167,7 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <TextBlock Text="连线（6）" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" />
+                    <TextBlock x:Name="EdgeCountText" Text="连线（6）" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" />
                     <DataGrid x:Name="EdgeGrid" Grid.Row="1">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="id" Binding="{Binding Id}" />

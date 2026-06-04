@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\SmartDiagram.Core\SmartDiagram.Core.csproj" />
     <ProjectReference Include="..\..\src\SmartDiagram.Drawio\SmartDiagram.Drawio.csproj" />
+    <ProjectReference Include="..\..\src\SmartDiagram.Model\SmartDiagram.Model.csproj" />
   </ItemGroup>
 
 </Project>
