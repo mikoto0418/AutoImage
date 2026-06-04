@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{07C551F7-DCC8-48C4-A6C9-CF132B311214}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartDiagram.App", "src\SmartDiagram.App\SmartDiagram.App.csproj", "{E7D1E6E5-C9F4-4CCC-92D7-97EF7DCD52F4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartDiagram.Core", "src\SmartDiagram.Core\SmartDiagram.Core.csproj", "{F8E0DF84-387C-453D-9199-1A766A3E19FA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{87C14716-7970-438B-AE33-E1EE0DDE4FEE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartDiagram.Tests", "tests\SmartDiagram.Tests\SmartDiagram.Tests.csproj", "{39C0BDA6-4DCC-42B1-9287-5CFB5A67F717}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartDiagram.Drawio", "src\SmartDiagram.Drawio\SmartDiagram.Drawio.csproj", "{17391428-7E87-47A7-8356-A6162CD3E350}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E7D1E6E5-C9F4-4CCC-92D7-97EF7DCD52F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7D1E6E5-C9F4-4CCC-92D7-97EF7DCD52F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7D1E6E5-C9F4-4CCC-92D7-97EF7DCD52F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7D1E6E5-C9F4-4CCC-92D7-97EF7DCD52F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8E0DF84-387C-453D-9199-1A766A3E19FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8E0DF84-387C-453D-9199-1A766A3E19FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8E0DF84-387C-453D-9199-1A766A3E19FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8E0DF84-387C-453D-9199-1A766A3E19FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39C0BDA6-4DCC-42B1-9287-5CFB5A67F717}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39C0BDA6-4DCC-42B1-9287-5CFB5A67F717}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39C0BDA6-4DCC-42B1-9287-5CFB5A67F717}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39C0BDA6-4DCC-42B1-9287-5CFB5A67F717}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17391428-7E87-47A7-8356-A6162CD3E350}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17391428-7E87-47A7-8356-A6162CD3E350}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17391428-7E87-47A7-8356-A6162CD3E350}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17391428-7E87-47A7-8356-A6162CD3E350}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E7D1E6E5-C9F4-4CCC-92D7-97EF7DCD52F4} = {07C551F7-DCC8-48C4-A6C9-CF132B311214}
+		{F8E0DF84-387C-453D-9199-1A766A3E19FA} = {07C551F7-DCC8-48C4-A6C9-CF132B311214}
+		{39C0BDA6-4DCC-42B1-9287-5CFB5A67F717} = {87C14716-7970-438B-AE33-E1EE0DDE4FEE}
+		{17391428-7E87-47A7-8356-A6162CD3E350} = {07C551F7-DCC8-48C4-A6C9-CF132B311214}
+	EndGlobalSection
+EndGlobal
