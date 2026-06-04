@@ -11,7 +11,9 @@ public sealed class DiagramGenerationService(IChatCompletionClient client)
     {
         var messages = DiagramPromptBuilder.Build(request);
         var response = await client.CompleteAsync(settings, messages, cancellationToken);
-        var document = DiagramJsonSerializer.Parse(response);
+        var document = request.CurrentDocument is null
+            ? DiagramJsonSerializer.Parse(response)
+            : DiagramEditOperationApplier.Apply(request.CurrentDocument, DiagramEditOperationSerializer.Parse(response));
         var validation = DiagramValidator.Validate(document);
 
         if (!validation.IsValid)

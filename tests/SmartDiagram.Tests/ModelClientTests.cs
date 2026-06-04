@@ -121,6 +121,88 @@ public sealed class ModelClientTests
         Assert.Contains("给学生增加联系方式属性", userPrompt);
     }
 
+    [Fact]
+    public async Task DiagramGenerationService_applies_model_edit_operations_when_enhancing()
+    {
+        var client = new StubChatClient("""
+        {
+          "operations": [
+            {
+              "op": "add_node",
+              "id": "student_phone",
+              "label": "联系电话",
+              "type": "attribute",
+              "shape": "ellipse"
+            },
+            {
+              "op": "add_edge",
+              "id": "edge_student_phone",
+              "from": "student",
+              "to": "student_phone",
+              "label": "拥有",
+              "line_type": "straight",
+              "arrow": "none"
+            }
+          ]
+        }
+        """);
+        var service = new DiagramGenerationService(client);
+
+        var document = await service.GenerateAsync(
+            ModelClientSettings.CreateMissing(),
+            DiagramGenerationRequest.ForEnhancement(
+                DiagramKind.ChenEr,
+                "给学生增加联系电话属性",
+                SampleDiagramData.ChenErDocument),
+            CancellationToken.None);
+
+        Assert.Contains(document.Nodes, node => node.Id == "student");
+        Assert.Contains(document.Nodes, node => node.Id == "student_phone" && node.Label == "联系电话");
+        Assert.Contains(document.Edges, edge => edge.Id == "edge_student_phone" && edge.From == "student" && edge.To == "student_phone");
+    }
+
+    [Fact]
+    public void DiagramPromptBuilder_requests_edit_operations_when_enhancing()
+    {
+        var request = DiagramGenerationRequest.ForEnhancement(
+            DiagramKind.ChenEr,
+            "给学生增加联系电话属性",
+            SampleDiagramData.ChenErDocument);
+
+        var userPrompt = DiagramPromptBuilder.Build(request).Single(message => message.Role == "user").Content;
+
+        Assert.Contains("\"operations\"", userPrompt);
+        Assert.Contains("add_node", userPrompt);
+        Assert.Contains("update_node", userPrompt);
+        Assert.Contains("delete_edge", userPrompt);
+        Assert.Contains("不要返回完整 Diagram JSON", userPrompt);
+    }
+
+    [Fact]
+    public async Task DiagramGenerationService_rejects_full_diagram_json_when_enhancing()
+    {
+        var client = new StubChatClient("""
+        {
+          "diagram_id": "module",
+          "diagram_type": "function_module",
+          "title": "系统模块",
+          "nodes": [],
+          "edges": []
+        }
+        """);
+        var service = new DiagramGenerationService(client);
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => service.GenerateAsync(
+            ModelClientSettings.CreateMissing(),
+            DiagramGenerationRequest.ForEnhancement(
+                DiagramKind.ChenEr,
+                "给学生增加联系电话属性",
+                SampleDiagramData.ChenErDocument),
+            CancellationToken.None));
+
+        Assert.Contains("operations", exception.Message);
+    }
+
     private sealed class StubChatClient(string response) : IChatCompletionClient
     {
         public Task<string> CompleteAsync(ModelClientSettings settings, IReadOnlyList<ChatMessage> messages, CancellationToken cancellationToken)

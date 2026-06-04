@@ -17,21 +17,35 @@ public static class DiagramPromptBuilder
     {
         if (request.CurrentDocument is not null)
         {
-            return $"""
-            图类型：{MapKind(request.DiagramKind)}
+            return $$"""
+            图类型：{{MapKind(request.DiagramKind)}}
 
             任务：增强当前图。
             必须保留当前图中已有的节点和连线；只能根据用户描述增加、重命名、修正或补充必要元素。
             除非用户明确要求删除，否则不要删除任何已有节点或连线。
-            输出必须是增强后的完整 Diagram JSON。
+            不要返回完整 Diagram JSON，只返回操作列表 JSON。
+
+            操作列表 schema：
+            {
+              "operations": [
+                { "op": "set_title", "title": "新标题" },
+                { "op": "add_node", "id": "node_id", "label": "节点文本", "type": "module | process | decision | start | end | entity | relationship | attribute", "shape": "rectangle | rounded_rectangle | diamond | ellipse" },
+                { "op": "update_node", "id": "node_id", "label": "可选新文本", "type": "可选新类型", "shape": "可选新形状" },
+                { "op": "rename_node", "id": "node_id", "label": "新节点文本" },
+                { "op": "delete_node", "id": "node_id" },
+                { "op": "add_edge", "id": "edge_id", "from": "source_node_id", "to": "target_node_id", "label": "可选文本", "line_type": "straight | orthogonal", "arrow": "none | classic" },
+                { "op": "update_edge", "id": "edge_id", "from": "可选新起点", "to": "可选新终点", "label": "可选新文本", "line_type": "straight | orthogonal", "arrow": "none | classic" },
+                { "op": "delete_edge", "id": "edge_id" }
+              ]
+            }
 
             当前 Diagram JSON：
-            {DiagramJsonSerializer.ToJson(request.CurrentDocument)}
+            {{DiagramJsonSerializer.ToJson(request.CurrentDocument)}}
 
             用户增强描述：
-            {request.Prompt}
+            {{request.Prompt}}
 
-            只返回 JSON，不要 Markdown，不要解释。
+            只返回操作列表 JSON，不要 Markdown，不要解释。
             """;
         }
 
